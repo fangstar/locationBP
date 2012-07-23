@@ -6,5 +6,6 @@
     <string name="latitude">Latitiude:</string>
     <string name="longitude">Longitude:</string>
     <string name="location">Location:</string>
+    <string name="update_time">Update Time:</string>
 
 </resources>

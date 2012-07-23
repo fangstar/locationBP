@@ -216,6 +216,8 @@ public class LocationActivity extends FragmentActivity {
 				// been covered.
 				// TODO Modify the search radius based on user settings?
 				updatePlaces(lastKnownLocation, PlacesConstants.DEFAULT_RADIUS, false);
+				
+				//updateLocationFragment(lastKnownLocation);
 				return null;
 			}
 		};
@@ -384,4 +386,26 @@ public class LocationActivity extends FragmentActivity {
 			Log.d(TAG, "Updating place list for: No Previous Location Found");
 	}
 
+/*	protected void updateLocation(Location location, int radius,
+			boolean forceRefresh) {
+		if (location != null) {
+			Log.d(TAG, "Updating place list.");
+			// Start the PlacesUpdateService. Note that we use an action rather than
+			// specifying the
+			// class directly. That's because we have different variations of the
+			// Service for different
+			// platform versions.
+			Intent updateServiceIntent = new Intent(this,
+					PlacesConstants.SUPPORTS_ECLAIR ? EclairPlacesUpdateService.class
+							: LocationUpdateService.class);
+			updateServiceIntent
+					.putExtra(PlacesConstants.EXTRA_KEY_LOCATION, location);
+			updateServiceIntent.putExtra(PlacesConstants.EXTRA_KEY_RADIUS, radius);
+			updateServiceIntent.putExtra(PlacesConstants.EXTRA_KEY_FORCEREFRESH,
+					forceRefresh);
+			startService(updateServiceIntent);
+		} else
+			Log.d(TAG, "Updating place list for: No Previous Location Found");		
+	}*/
+	
 }

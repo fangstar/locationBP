@@ -21,7 +21,7 @@ package com.mfcoding.locationBP.services;
  * Extends the {@link PlacesUpdateService} to force Intent redelivery 
  * on Eclaire+ devices (where this defaults to false).
  */
-public class EclairPlacesUpdateService extends PlacesUpdateService {
+public class EclairPlacesUpdateService extends LocationUpdateService {
   @Override
   protected void setIntentRedeliveryMode(boolean enable) {
     setIntentRedelivery(true);

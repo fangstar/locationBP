@@ -1,8 +1,11 @@
 package com.mfcoding.locationBP.UI.fragments;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -54,7 +57,8 @@ public class LocationFragment extends Fragment {
 	String latitude;
 	String longitude;
 	String[] location;
-
+	protected SharedPreferences prefs;
+	
 	public LocationFragment() {
 		super();
 	}
@@ -91,7 +95,11 @@ public class LocationFragment extends Fragment {
 					PlacesConstants.ARGUMENTS_KEY_LATITUDE);
 			longitude = getArguments().getString(
 					PlacesConstants.ARGUMENTS_KEY_LONGITUDE);
+			Log.d(TAG, String.format("getArgs - latitude:%s longitude:%s", latitude, longitude));
 		}
+		
+		prefs = getActivity().getSharedPreferences(PlacesConstants.SHARED_PREFERENCE_FILE,
+				Context.MODE_PRIVATE);
 
 		return view;
 	}
