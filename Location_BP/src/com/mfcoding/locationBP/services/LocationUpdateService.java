@@ -1,13 +1,9 @@
 package com.mfcoding.locationBP.services;
 
-import com.mfcoding.locationBP.PlacesConstants;
-import com.mfcoding.locationBP.receivers.ConnectivityChangedReceiver;
-import com.mfcoding.locationBP.receivers.LocationChangedReceiver;
-import com.mfcoding.locationBP.receivers.PassiveLocationChangedReceiver;
-
 import android.app.IntentService;
 import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -20,6 +16,12 @@ import android.net.NetworkInfo;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.util.Log;
+
+import com.mfcoding.locationBP.PlacesConstants;
+import com.mfcoding.locationBP.content_providers.LocationContentProvider;
+import com.mfcoding.locationBP.receivers.ConnectivityChangedReceiver;
+import com.mfcoding.locationBP.receivers.LocationChangedReceiver;
+import com.mfcoding.locationBP.receivers.PassiveLocationChangedReceiver;
 
 public class LocationUpdateService extends IntentService {
 	protected static String TAG = "LocationUpdateService";
@@ -156,6 +158,7 @@ public class LocationUpdateService extends IntentService {
 						PlacesConstants.SP_KEY_LAST_LIST_UPDATE_LAT, Long.MIN_VALUE);
 				long lastLng = prefs.getLong(
 						PlacesConstants.SP_KEY_LAST_LIST_UPDATE_LNG, Long.MIN_VALUE);
+				Log.d(TAG, "!doUpdate - lastLat:"+lastLat+" lastLng:"+lastLng);
 				Location lastLocation = new Location(
 						PlacesConstants.CONSTRUCTED_LOCATION_PROVIDER);
 				lastLocation.setLatitude(lastLat);
@@ -171,18 +174,153 @@ public class LocationUpdateService extends IntentService {
 				// Refresh the prefetch count for each new location.
 				prefetchCount = 0;
 				// Remove the old locations
-				//removeOldLocations(location, radius);
+				removeOldLocations(location, radius);
+				
 				// Hit the server for new venues for the current location.
-				//refreshPlaces(location, radius);
+				refreshPlaces(location, radius);
+				Log.d(TAG, " doUpdate here");
+        // Save the last update time and place to the Shared Preferences.
+//        prefsEditor.putLong(PlacesConstants.SP_KEY_LAST_LIST_UPDATE_LAT, (long) location.getLatitude());
+//        prefsEditor.putLong(PlacesConstants.SP_KEY_LAST_LIST_UPDATE_LNG, (long) location.getLongitude());
+//        prefsEditor.putLong(PlacesConstants.SP_KEY_LAST_LIST_UPDATE_TIME, System.currentTimeMillis());      
+//        prefsEditor.commit();				
 			} else
-				Log.d(TAG, "Place List is fresh: Not refreshing");
+				Log.d(TAG, "Data is fresh: Not refreshing");
 
 			// Retry any queued checkins.
 			// Intent checkinServiceIntent = new Intent(this,
 			// PlaceCheckinService.class);
 			// startService(checkinServiceIntent);
 		}
-		Log.d(TAG, "Place List Download Service Complete");
+		Log.d(TAG, "Location Service Complete");
 	}
+  
+  /**
+   * Polls the underlying service to return a list of places within the specified
+   * radius of the specified Location. 
+   * @param location Location
+   * @param radius Radius
+   */
+  protected void refreshPlaces(Location location, int radius) {   
+  	Log.d(TAG, "refreshPlaces");
+    // Log to see if we'll be prefetching the details page of each new place.
+    if (mobileData) {
+      Log.d(TAG, "Not prefetching due to being on mobile");
+    } else if (lowBattery) {
+      Log.d(TAG, "Not prefetching due to low battery");
+    }
 
+    long currentTime = System.currentTimeMillis();
+    
+    // Remove places from the PlacesContentProviderlist that aren't from this updte.
+    //String where = PlaceDetailsContentProvider.KEY_LAST_UPDATE_TIME + " < " + currentTime; 
+    contentResolver.delete(LocationContentProvider.CONTENT_URI, null, null);
+   
+    // Add each new place to the Places Content Provider
+    addPlace(location, currentTime);
+    
+
+    
+    // Save the last update time and place to the Shared Preferences.
+    prefsEditor.putLong(PlacesConstants.SP_KEY_LAST_LIST_UPDATE_LAT, (long) location.getLatitude());
+    prefsEditor.putLong(PlacesConstants.SP_KEY_LAST_LIST_UPDATE_LNG, (long) location.getLongitude());
+    prefsEditor.putLong(PlacesConstants.SP_KEY_LAST_LIST_UPDATE_TIME, System.currentTimeMillis());      
+    prefsEditor.commit();
+
+  }
+	
+	
+  
+  /**
+   * Adds the new place to the {@link PlacesContentProvider} using the values passed in.
+   * TODO Update this method to accept and persist the place information your service provides.
+   * @param currentLocation Current location
+   * @param id Unique identifier
+   * @param name Name
+   * @param vicinity Vicinity
+   * @param types Types
+   * @param location Location
+   * @param viewport Viewport
+   * @param icon Icon
+   * @param reference Reference
+   * @param currentTime Current time
+   * @return Successfully added
+   */
+  protected boolean addPlace(Location currentLocation, long currentTime) {
+  	Log.d(TAG, "addPlace");
+    // Contruct the Content Values
+    ContentValues values = new ContentValues();
+//    values.put(PlacesContentProvider.KEY_ID, id);  
+//    values.put(PlacesContentProvider.KEY_NAME, name);
+    double lat = currentLocation.getLatitude();
+    double lng = currentLocation.getLongitude();
+//    double lat = location.getLatitude();
+//    double lng = location.getLongitude();
+    values.put(LocationContentProvider.KEY_LOCATION_LAT, lat);
+    values.put(LocationContentProvider.KEY_LOCATION_LNG, lng);
+//    values.put(LocationContentProvider.KEY_VICINITY, vicinity);
+//    values.put(LocationContentProvider.KEY_TYPES, types);
+//    values.put(LocationContentProvider.KEY_VIEWPORT, viewport);
+//    values.put(LocationContentProvider.KEY_ICON, icon);
+//    values.put(LocationContentProvider.KEY_REFERENCE, reference);
+    values.put(LocationContentProvider.KEY_LAST_UPDATE_TIME, currentTime);
+
+    // Calculate the distance between the current location and the venue's location
+//    float distance = 0;
+//    if (currentLocation != null && location != null)
+//      distance = currentLocation.distanceTo(location);
+//    values.put(PlacesContentProvider.KEY_DISTANCE, distance);  
+    
+    // Update or add the new place to the PlacesContentProvider
+    //String where = LocationContentProvider.KEY_ID + " = '" + id + "'";
+    String where = "";
+    boolean result = false;
+    try {
+      if (contentResolver.update(LocationContentProvider.CONTENT_URI, values, where, null) == 0) {
+        if (contentResolver.insert(LocationContentProvider.CONTENT_URI, values) != null)
+          result = true;
+      }
+      else 
+        result = true;
+    }
+    catch (Exception ex) { 
+      Log.e(TAG, "Adding " + " to DB" + " failed. (Exception)");
+    }
+    
+    // If we haven't yet reached our prefetching limit, and we're either
+    // on WiFi or don't have a WiFi-only prefetching restriction, and we
+    // either don't have low batter or don't have a low battery prefetching 
+    // restriction, then prefetch the details for this newly added place.
+/*    if ((prefetchCount < PlacesConstants.PREFETCH_LIMIT) &&
+        (!PlacesConstants.PREFETCH_ON_WIFI_ONLY || !mobileData) &&
+        (!PlacesConstants.DISABLE_PREFETCH_ON_LOW_BATTERY || !lowBattery)) {
+      prefetchCount++;
+      
+      // Start the PlaceDetailsUpdateService to prefetch the details for this place.
+      // As we're prefetching, don't force the refresh if we already have data.
+      Intent updateServiceIntent = new Intent(this, PlaceDetailsUpdateService.class);
+      updateServiceIntent.putExtra(PlacesConstants.EXTRA_KEY_REFERENCE, reference);
+      updateServiceIntent.putExtra(PlacesConstants.EXTRA_KEY_ID, id);
+      updateServiceIntent.putExtra(PlacesConstants.EXTRA_KEY_FORCEREFRESH, false);
+      startService(updateServiceIntent);
+    }*/
+    
+    return result;
+  }
+
+  
+  /**
+   * Remove stale place detail records unless we've set the persistent cache flag to true.
+   * This is typically the case where a place has actually been viewed rather than prefetched. 
+   * @param location Location
+   * @param radius Radius
+   */
+  protected void removeOldLocations(Location location, int radius) {
+  	Log.d(TAG, "removeOldLocations");
+    // Stale Detail Pages
+//    long minTime = System.currentTimeMillis()-PlacesConstants.MAX_DETAILS_UPDATE_LATENCY;
+//    String where = PlaceDetailsContentProvider.KEY_LAST_UPDATE_TIME + " < " + minTime + " AND " +
+//                   PlaceDetailsContentProvider.KEY_FORCE_CACHE + " = 0";
+//    contentResolver.delete(PlaceDetailsContentProvider.CONTENT_URI, where, null);
+  }
 }

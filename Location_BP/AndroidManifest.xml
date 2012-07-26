@@ -26,23 +26,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".UI.HelloFragmentActivity"
-            android:label="@string/app_name" >
-        </activity>
 
         <service
-            android:name=".services.PlacesUpdateService"
+            android:name=".services.LocationUpdateService"
             android:enabled="@bool/pre_froyo" >
             <intent-filter>
-                <action android:name="com.radioactiveyak.places.placesupdateservice" />
+                <action android:name="com.mfcoding.places.locationupdateservice" />
             </intent-filter>
         </service>
         <service
             android:name=".services.EclairPlacesUpdateService"
             android:enabled="@bool/froyo_or_later" >
             <intent-filter>
-                <action android:name="com.radioactiveyak.places.placesupdateservice" />
+                <action android:name="com.mfcoding.places.locationupdateservice" />
             </intent-filter>
         </service>
 
@@ -67,6 +63,8 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+        
+        <provider android:authorities="com.mfcoding.provider.locations" android:name=".content_providers.LocationContentProvider"/>
     </application>
 
 </manifest>

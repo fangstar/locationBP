@@ -26,7 +26,7 @@ import android.util.Log;
 
 import com.mfcoding.locationBP.PlacesConstants;
 import com.mfcoding.locationBP.services.EclairPlacesUpdateService;
-import com.mfcoding.locationBP.services.PlacesUpdateService;
+import com.mfcoding.locationBP.services.LocationUpdateService;
 import com.mfcoding.locationBP.utils.LegacyLastLocationFinder;
 
 /**
@@ -84,7 +84,7 @@ public class PassiveLocationChangedReceiver extends BroadcastReceiver {
     // Start the Service used to find nearby points of interest based on the last detected location.
     if (location != null) {
       Log.d(TAG, "Passivly updating place list.");
-      Intent updateServiceIntent = new Intent(context, PlacesConstants.SUPPORTS_ECLAIR ? EclairPlacesUpdateService.class : PlacesUpdateService.class);
+      Intent updateServiceIntent = new Intent(context, PlacesConstants.SUPPORTS_ECLAIR ? EclairPlacesUpdateService.class : LocationUpdateService.class);
       updateServiceIntent.putExtra(PlacesConstants.EXTRA_KEY_LOCATION, location);
       updateServiceIntent.putExtra(PlacesConstants.EXTRA_KEY_RADIUS, PlacesConstants.DEFAULT_RADIUS);
       updateServiceIntent.putExtra(PlacesConstants.EXTRA_KEY_FORCEREFRESH, false);

@@ -1,5 +1,7 @@
 package com.mfcoding.locationBP.UI;
 
+import java.text.SimpleDateFormat;
+
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -22,10 +24,9 @@ import android.util.Log;
 import com.mfcoding.locationBP.PlacesConstants;
 import com.mfcoding.locationBP.R;
 import com.mfcoding.locationBP.UI.fragments.LocationFragment;
+import com.mfcoding.locationBP.UI.fragments.PrevLocationFragment;
 import com.mfcoding.locationBP.receivers.LocationChangedReceiver;
 import com.mfcoding.locationBP.receivers.PassiveLocationChangedReceiver;
-import com.mfcoding.locationBP.services.EclairPlacesUpdateService;
-import com.mfcoding.locationBP.services.PlacesUpdateService;
 import com.mfcoding.locationBP.utils.PlatformSpecificImplementationFactory;
 import com.mfcoding.locationBP.utils.base.ILastLocationFinder;
 import com.mfcoding.locationBP.utils.base.LocationUpdateRequester;
@@ -54,7 +55,8 @@ public class LocationActivity extends FragmentActivity {
 	protected ComponentName newCheckinReceiverName;
 
 	LocationFragment locationFragment;
-	
+	PrevLocationFragment prevLocationFragment;
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -65,11 +67,13 @@ public class LocationActivity extends FragmentActivity {
 		// Get a handle to the Fragments
 		locationFragment = (LocationFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.location_fragment);
-	   
-    // Get references to the managers
-    packageManager = getPackageManager();
-    notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-    locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+		prevLocationFragment = (PrevLocationFragment) getSupportFragmentManager()
+				.findFragmentById(R.id.prev_location_fragment);
+
+		// Get references to the managers
+		packageManager = getPackageManager();
+		notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
 		// Get a reference to the Shared Preferences and a Shared Preference Editor.
 		prefs = getSharedPreferences(PlacesConstants.SHARED_PREFERENCE_FILE,
@@ -145,7 +149,7 @@ public class LocationActivity extends FragmentActivity {
 		// registerReceiver(checkinReceiver, newCheckinFilter);
 
 		// Cancel notifications.
-		//notificationManager.cancel(PlacesConstants.CHECKIN_NOTIFICATION);
+		// notificationManager.cancel(PlacesConstants.CHECKIN_NOTIFICATION);
 
 		// Update the CheckinFragment with the last checkin.
 		/*
@@ -185,6 +189,43 @@ public class LocationActivity extends FragmentActivity {
 		super.onPause();
 	}
 
+	protected void getLocation(boolean updateWhenLocationChanges) {
+		// This isn't directly affecting the UI, so put it on a worker thread.
+		AsyncTask<Void, Void, Void> findLastLocationTask = new AsyncTask<Void, Void, Void>() {
+			Location lastKnownLocation;
+			@Override
+			protected Void doInBackground(Void... params) {
+				// Find the last known location, specifying a required accuracy of
+				// within the min distance between updates
+				// and a required latency of the minimum time required between updates.
+				Location lastKnownLocation = lastLocationFinder.getLastBestLocation(
+						PlacesConstants.MAX_DISTANCE, System.currentTimeMillis()
+								- PlacesConstants.MAX_TIME);
+				this.lastKnownLocation = lastKnownLocation;
+//				SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss z");
+//				Log.d(TAG, "getLocation time:"+sdf.format(lastKnownLocation.getTime())
+//						+" lat:"+lastKnownLocation.getLatitude()
+//						+" long:"+lastKnownLocation.getLatitude());
+				return null;
+			}
+			@Override
+			protected void onPostExecute(Void result) {
+				super.onPostExecute(result);
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss z");
+				Log.d(TAG, "getLocation time:"+sdf.format(lastKnownLocation.getTime())
+						+" lat:"+lastKnownLocation.getLatitude()
+						+" long:"+lastKnownLocation.getLatitude());				
+			}
+			
+			
+		};
+		findLastLocationTask.execute();
+
+		// If we have requested location updates, turn them on here.
+		toggleUpdatesWhenLocationChanges(updateWhenLocationChanges);
+
+	}
+
 	/**
 	 * Find the last known location (using a {@link LastLocationFinder}) and
 	 * updates the place list accordingly.
@@ -203,7 +244,12 @@ public class LocationActivity extends FragmentActivity {
 				Location lastKnownLocation = lastLocationFinder.getLastBestLocation(
 						PlacesConstants.MAX_DISTANCE, System.currentTimeMillis()
 								- PlacesConstants.MAX_TIME);
-
+				
+//				SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss z");
+//				Log.d(TAG, "getLocation... time:"+sdf.format(lastKnownLocation.getTime())
+//						+" lat:"+lastKnownLocation.getLatitude()
+//						+" long:"+lastKnownLocation.getLatitude());
+				
 				// Update the place list based on the last known location within a
 				// defined radius.
 				// Note that this is *not* a forced update. The Place List Service has
@@ -215,9 +261,9 @@ public class LocationActivity extends FragmentActivity {
 				// unless the location has changed or a minimum latency or distance has
 				// been covered.
 				// TODO Modify the search radius based on user settings?
-				updatePlaces(lastKnownLocation, PlacesConstants.DEFAULT_RADIUS, false);
-				
-				//updateLocationFragment(lastKnownLocation);
+				//updatePlaces(lastKnownLocation, PlacesConstants.DEFAULT_RADIUS, false);
+
+				// updateLocationFragment(lastKnownLocation);
 				return null;
 			}
 		};
@@ -298,9 +344,14 @@ public class LocationActivity extends FragmentActivity {
 	 * is outside the bounds of our maximum distance and latency.
 	 */
 	protected LocationListener oneShotLastLocationUpdateListener = new LocationListener() {
-		public void onLocationChanged(Location l) {
-			updatePlaces(l, PlacesConstants.DEFAULT_RADIUS, true);
-		}
+		public void onLocationChanged(Location loc) {
+			// updatePlaces(l, PlacesConstants.DEFAULT_RADIUS, true);
+			locationFragment.updateUI(loc);
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss z");
+			Log.d(TAG, "oneShotLastLocation... time:"+sdf.format(loc.getTime())
+					+" lat:"+loc.getLatitude()
+					+" long:"+loc.getLongitude());		
+			}
 
 		public void onProviderDisabled(String provider) {
 		}
@@ -349,6 +400,14 @@ public class LocationActivity extends FragmentActivity {
 			// Provider.
 			if (providerDisabled)
 				requestLocationUpdates();
+
+			boolean locUpdated = intent
+					.hasExtra(LocationManager.KEY_LOCATION_CHANGED);
+			if (locUpdated)
+				prevLocationFragment.updateUI(intent);
+
+			Log.d(TAG, "providerDisabled:" + providerDisabled + " locUpdated:"
+					+ locUpdated);
 		}
 	};
 
@@ -366,46 +425,36 @@ public class LocationActivity extends FragmentActivity {
 	 */
 	protected void updatePlaces(Location location, int radius,
 			boolean forceRefresh) {
-		if (location != null) {
-			Log.d(TAG, "Updating place list.");
-			// Start the PlacesUpdateService. Note that we use an action rather than
-			// specifying the
-			// class directly. That's because we have different variations of the
-			// Service for different
-			// platform versions.
-			Intent updateServiceIntent = new Intent(this,
-					PlacesConstants.SUPPORTS_ECLAIR ? EclairPlacesUpdateService.class
-							: PlacesUpdateService.class);
-			updateServiceIntent
-					.putExtra(PlacesConstants.EXTRA_KEY_LOCATION, location);
-			updateServiceIntent.putExtra(PlacesConstants.EXTRA_KEY_RADIUS, radius);
-			updateServiceIntent.putExtra(PlacesConstants.EXTRA_KEY_FORCEREFRESH,
-					forceRefresh);
-			startService(updateServiceIntent);
-		} else
-			Log.d(TAG, "Updating place list for: No Previous Location Found");
+		/*
+		 * if (location != null) { Log.d(TAG, "Updating place list."); // Start the
+		 * PlacesUpdateService. Note that we use an action rather than // specifying
+		 * the // class directly. That's because we have different variations of the
+		 * // Service for different // platform versions. Intent updateServiceIntent
+		 * = new Intent(this, PlacesConstants.SUPPORTS_ECLAIR ?
+		 * EclairPlacesUpdateService.class : PlacesUpdateService.class);
+		 * updateServiceIntent .putExtra(PlacesConstants.EXTRA_KEY_LOCATION,
+		 * location); updateServiceIntent.putExtra(PlacesConstants.EXTRA_KEY_RADIUS,
+		 * radius);
+		 * updateServiceIntent.putExtra(PlacesConstants.EXTRA_KEY_FORCEREFRESH,
+		 * forceRefresh); startService(updateServiceIntent); } else Log.d(TAG,
+		 * "Updating place list for: No Previous Location Found");
+		 */
 	}
 
-/*	protected void updateLocation(Location location, int radius,
-			boolean forceRefresh) {
-		if (location != null) {
-			Log.d(TAG, "Updating place list.");
-			// Start the PlacesUpdateService. Note that we use an action rather than
-			// specifying the
-			// class directly. That's because we have different variations of the
-			// Service for different
-			// platform versions.
-			Intent updateServiceIntent = new Intent(this,
-					PlacesConstants.SUPPORTS_ECLAIR ? EclairPlacesUpdateService.class
-							: LocationUpdateService.class);
-			updateServiceIntent
-					.putExtra(PlacesConstants.EXTRA_KEY_LOCATION, location);
-			updateServiceIntent.putExtra(PlacesConstants.EXTRA_KEY_RADIUS, radius);
-			updateServiceIntent.putExtra(PlacesConstants.EXTRA_KEY_FORCEREFRESH,
-					forceRefresh);
-			startService(updateServiceIntent);
-		} else
-			Log.d(TAG, "Updating place list for: No Previous Location Found");		
-	}*/
-	
+	/*
+	 * protected void updateLocation(Location location, int radius, boolean
+	 * forceRefresh) { if (location != null) { Log.d(TAG, "Updating place list.");
+	 * // Start the PlacesUpdateService. Note that we use an action rather than //
+	 * specifying the // class directly. That's because we have different
+	 * variations of the // Service for different // platform versions. Intent
+	 * updateServiceIntent = new Intent(this, PlacesConstants.SUPPORTS_ECLAIR ?
+	 * EclairPlacesUpdateService.class : LocationUpdateService.class);
+	 * updateServiceIntent .putExtra(PlacesConstants.EXTRA_KEY_LOCATION,
+	 * location); updateServiceIntent.putExtra(PlacesConstants.EXTRA_KEY_RADIUS,
+	 * radius);
+	 * updateServiceIntent.putExtra(PlacesConstants.EXTRA_KEY_FORCEREFRESH,
+	 * forceRefresh); startService(updateServiceIntent); } else Log.d(TAG,
+	 * "Updating place list for: No Previous Location Found"); }
+	 */
+
 }

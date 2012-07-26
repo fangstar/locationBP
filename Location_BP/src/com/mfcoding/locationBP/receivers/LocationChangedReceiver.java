@@ -25,7 +25,7 @@ import android.util.Log;
 
 import com.mfcoding.locationBP.PlacesConstants;
 import com.mfcoding.locationBP.services.EclairPlacesUpdateService;
-import com.mfcoding.locationBP.services.PlacesUpdateService;
+import com.mfcoding.locationBP.services.LocationUpdateService;
 
 /**
  * This Receiver class is used to listen for Broadcast Intents that announce
@@ -55,12 +55,15 @@ public class LocationChangedReceiver extends BroadcastReceiver {
     }
     if (intent.hasExtra(locationKey)) {
       Location location = (Location)intent.getExtras().get(locationKey);
-      Log.d(TAG, "Actively Updating place list");
-      Intent updateServiceIntent = new Intent(context, PlacesConstants.SUPPORTS_ECLAIR ? EclairPlacesUpdateService.class : PlacesUpdateService.class);
+      Log.d(TAG, "Actively Updating location lat:"+location.getLatitude()+" lng:"+location.getLongitude());
+      Intent updateServiceIntent = new Intent(context, PlacesConstants.SUPPORTS_ECLAIR ? EclairPlacesUpdateService.class : LocationUpdateService.class);
       updateServiceIntent.putExtra(PlacesConstants.EXTRA_KEY_LOCATION, location);
       updateServiceIntent.putExtra(PlacesConstants.EXTRA_KEY_RADIUS, PlacesConstants.DEFAULT_RADIUS);
       updateServiceIntent.putExtra(PlacesConstants.EXTRA_KEY_FORCEREFRESH, true);
       context.startService(updateServiceIntent);
+      
+//      Intent locUpdateIntent = new Intent(PlacesConstants.ACTIVE_LOCATION_UPDATE);
+//      context.sendBroadcast(locUpdateIntent);
     }
   }
 }

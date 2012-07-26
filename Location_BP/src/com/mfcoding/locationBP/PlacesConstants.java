@@ -107,9 +107,10 @@ public class PlacesConstants {
   public static String ARGUMENTS_KEY_LATITUDE = "latitude";
   public static String ARGUMENTS_KEY_LONGITUDE = "longitude";
   
-  public static String NEW_CHECKIN_ACTION = "com.mfcoding.places.NEW_CHECKIN_ACTION";
-  public static String RETRY_QUEUED_CHECKINS_ACTION = "com.mfcoding.places.retry_queued_checkins";
+//  public static String NEW_CHECKIN_ACTION = "com.mfcoding.places.NEW_CHECKIN_ACTION";
+//  public static String RETRY_QUEUED_CHECKINS_ACTION = "com.mfcoding.places.retry_queued_checkins";
   public static String ACTIVE_LOCATION_UPDATE_PROVIDER_DISABLED = "com.mfcoding.places.active_location_update_provider_disabled";
+  public static String ACTIVE_LOCATION_UPDATE = "com.mfcoding.places.active_location_update";
   
   public static boolean SUPPORTS_GINGERBREAD = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD;
   public static boolean SUPPORTS_HONEYCOMB = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB;

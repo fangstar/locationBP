@@ -1,8 +1,13 @@
 package com.mfcoding.locationBP.UI.fragments;
 
+import java.text.SimpleDateFormat;
+
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -87,7 +92,7 @@ public class PrevLocationFragment extends Fragment {
 		View view = inflater.inflate(R.layout.location2, container, false);
 		locationTextView = (TextView) view.findViewById(R.id.location);
 		latitudeTextView = (TextView) view.findViewById(R.id.latitude);
-		longitudeTextView = (TextView) view.findViewById(R.id.latitude);
+		longitudeTextView = (TextView) view.findViewById(R.id.longitude);
 		timeTextView = (TextView) view.findViewById(R.id.time);
 		locationTextView.setText("Prev Location");
 /*
@@ -109,8 +114,12 @@ public class PrevLocationFragment extends Fragment {
 				PlacesConstants.SP_KEY_LAST_LIST_UPDATE_LAT, Long.MIN_VALUE);
 		long longitude = prefs.getLong(
 				PlacesConstants.SP_KEY_LAST_LIST_UPDATE_LNG, Long.MIN_VALUE);
-		Log.d(TAG, String.format("getArgs - time:%d latitude:%d longitude:%d", lastTime,latitude, longitude));
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss z");
+		Log.d(TAG, String.format("getSharedPreferences - time:%s latitude:%d longitude:%d", sdf.format(lastTime),latitude, longitude));
 		
+		timeTextView.setText(sdf.format(lastTime));
+		latitudeTextView.setText(String.valueOf(latitude));
+		longitudeTextView.setText(String.valueOf(longitude));
 
 		return view;
 	}
@@ -120,4 +129,40 @@ public class PrevLocationFragment extends Fragment {
 		super.onResume();
 	}
 
+	public void updateUI() {
+		long lastTime = prefs.getLong(
+				PlacesConstants.SP_KEY_LAST_LIST_UPDATE_TIME, Long.MIN_VALUE);		
+		long latitude = prefs.getLong(
+				PlacesConstants.SP_KEY_LAST_LIST_UPDATE_LAT, Long.MIN_VALUE);
+		long longitude = prefs.getLong(
+				PlacesConstants.SP_KEY_LAST_LIST_UPDATE_LNG, Long.MIN_VALUE);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss z");
+		Log.d(TAG, String.format("getSharedPreferences - time:%s latitude:%d longitude:%d", sdf.format(lastTime),latitude, longitude));
+		
+		timeTextView.setText(sdf.format(lastTime));
+		latitudeTextView.setText(String.valueOf(latitude));
+		longitudeTextView.setText(String.valueOf(longitude));		
+		
+		Log.d(TAG, "updateUI()");
+	}
+
+	public void updateUI(Intent intent) {
+//		long lastTime = prefs.getLong(
+//				PlacesConstants.SP_KEY_LAST_LIST_UPDATE_TIME, Long.MIN_VALUE);		
+//		long latitude = prefs.getLong(
+//				PlacesConstants.SP_KEY_LAST_LIST_UPDATE_LAT, Long.MIN_VALUE);
+//		long longitude = prefs.getLong(
+//				PlacesConstants.SP_KEY_LAST_LIST_UPDATE_LNG, Long.MIN_VALUE);
+//		Log.d(TAG, String.format("getSharedPreferences - time:%d latitude:%d longitude:%d", lastTime,latitude, longitude));
+    Location location = (Location)intent.getExtras().get(LocationManager.KEY_LOCATION_CHANGED);
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss z");
+		timeTextView.setText(sdf.format(location.getTime()));
+		latitudeTextView.setText(String.valueOf(location.getLatitude()));
+		longitudeTextView.setText(String.valueOf(location.getLongitude()));
+
+		Log.d(TAG, "updateUI(intent)");
+
+	}
+	
 }

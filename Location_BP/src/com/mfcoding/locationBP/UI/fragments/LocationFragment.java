@@ -1,11 +1,13 @@
 package com.mfcoding.locationBP.UI.fragments;
 
+import java.text.SimpleDateFormat;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -95,7 +97,7 @@ public class LocationFragment extends Fragment {
 					PlacesConstants.ARGUMENTS_KEY_LATITUDE);
 			longitude = getArguments().getString(
 					PlacesConstants.ARGUMENTS_KEY_LONGITUDE);
-			Log.d(TAG, String.format("getArgs - latitude:%s longitude:%s", latitude, longitude));
+			Log.d(TAG, String.format("getArgs != null - latitude:%s longitude:%s", latitude, longitude));
 		}
 		
 		prefs = getActivity().getSharedPreferences(PlacesConstants.SHARED_PREFERENCE_FILE,
@@ -109,4 +111,22 @@ public class LocationFragment extends Fragment {
 		super.onResume();
 	}
 
+	public void updateUI(Location location) {
+//		long lastTime = prefs.getLong(
+//				PlacesConstants.SP_KEY_LAST_LIST_UPDATE_TIME, Long.MIN_VALUE);		
+//		long latitude = prefs.getLong(
+//				PlacesConstants.SP_KEY_LAST_LIST_UPDATE_LAT, Long.MIN_VALUE);
+//		long longitude = prefs.getLong(
+//				PlacesConstants.SP_KEY_LAST_LIST_UPDATE_LNG, Long.MIN_VALUE);
+//		Log.d(TAG, String.format("getSharedPreferences - time:%d latitude:%d longitude:%d", lastTime,latitude, longitude));
+		double latitude = location.getLatitude();
+		double longitude = location.getLongitude();
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss z");
+		
+		latitudeTextView.setText(String.valueOf(latitude));
+		longitudeTextView.setText(String.valueOf(longitude));		
+		Log.d(TAG, "updateUI(loc)");
+	}
+	
 }
