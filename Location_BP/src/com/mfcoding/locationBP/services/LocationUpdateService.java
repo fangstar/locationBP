@@ -18,7 +18,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.mfcoding.locationBP.PlacesConstants;
-import com.mfcoding.locationBP.content_providers.LocationContentProvider;
+import com.mfcoding.locationBP.content_providers.LocationsContentProvider;
 import com.mfcoding.locationBP.receivers.ConnectivityChangedReceiver;
 import com.mfcoding.locationBP.receivers.LocationChangedReceiver;
 import com.mfcoding.locationBP.receivers.PassiveLocationChangedReceiver;
@@ -214,7 +214,7 @@ public class LocationUpdateService extends IntentService {
     
     // Remove places from the PlacesContentProviderlist that aren't from this updte.
     //String where = PlaceDetailsContentProvider.KEY_LAST_UPDATE_TIME + " < " + currentTime; 
-    contentResolver.delete(LocationContentProvider.CONTENT_URI, null, null);
+    contentResolver.delete(LocationsContentProvider.CONTENT_URI, null, null);
    
     // Add each new place to the Places Content Provider
     addPlace(location, currentTime);
@@ -256,14 +256,14 @@ public class LocationUpdateService extends IntentService {
     double lng = currentLocation.getLongitude();
 //    double lat = location.getLatitude();
 //    double lng = location.getLongitude();
-    values.put(LocationContentProvider.KEY_LOCATION_LAT, lat);
-    values.put(LocationContentProvider.KEY_LOCATION_LNG, lng);
+    values.put(LocationsContentProvider.KEY_LOCATION_LAT, lat);
+    values.put(LocationsContentProvider.KEY_LOCATION_LNG, lng);
 //    values.put(LocationContentProvider.KEY_VICINITY, vicinity);
 //    values.put(LocationContentProvider.KEY_TYPES, types);
 //    values.put(LocationContentProvider.KEY_VIEWPORT, viewport);
 //    values.put(LocationContentProvider.KEY_ICON, icon);
 //    values.put(LocationContentProvider.KEY_REFERENCE, reference);
-    values.put(LocationContentProvider.KEY_LAST_UPDATE_TIME, currentTime);
+    values.put(LocationsContentProvider.KEY_LAST_UPDATE_TIME, currentTime);
 
     // Calculate the distance between the current location and the venue's location
 //    float distance = 0;
@@ -276,8 +276,8 @@ public class LocationUpdateService extends IntentService {
     String where = "";
     boolean result = false;
     try {
-      if (contentResolver.update(LocationContentProvider.CONTENT_URI, values, where, null) == 0) {
-        if (contentResolver.insert(LocationContentProvider.CONTENT_URI, values) != null)
+      if (contentResolver.update(LocationsContentProvider.CONTENT_URI, values, where, null) == 0) {
+        if (contentResolver.insert(LocationsContentProvider.CONTENT_URI, values) != null)
           result = true;
       }
       else 

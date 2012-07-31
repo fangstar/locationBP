@@ -19,8 +19,12 @@ package com.mfcoding.locationBP.receivers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Bundle;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
 import android.util.Log;
 
 import com.mfcoding.locationBP.PlacesConstants;
@@ -32,7 +36,7 @@ import com.mfcoding.locationBP.services.LocationUpdateService;
  * that a location change has occurred. This is used instead of a LocationListener
  * within an Activity is our only action is to start a service.
  */
-public class LocationChangedReceiver extends BroadcastReceiver {
+public class LocationChangedReceiver extends BroadcastReceiver implements LoaderCallbacks<Cursor> {
   
   protected static String TAG = "LocationChangedReceiver";
   
@@ -66,4 +70,22 @@ public class LocationChangedReceiver extends BroadcastReceiver {
 //      context.sendBroadcast(locUpdateIntent);
     }
   }
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 }

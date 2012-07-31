@@ -3,7 +3,7 @@
 
     <string name="hello">Hello World, LocationActivity!</string>
     <string name="app_name">Location_BP</string>
-    <string name="latitude">Latitiude:</string>
+    <string name="latitude">Latitude:</string>
     <string name="longitude">Longitude:</string>
     <string name="location">Location:</string>
     <string name="update_time">Update Time:</string>

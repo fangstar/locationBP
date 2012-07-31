@@ -10,11 +10,18 @@
         android:layout_height="wrap_content"
         class="com.mfcoding.locationBP.UI.fragments.LocationFragment" >
     </fragment>
+
     <fragment
         android:id="@+id/prev_location_fragment"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         class="com.mfcoding.locationBP.UI.fragments.PrevLocationFragment" >
-    </fragment>    
+    </fragment>
+
+    <fragment
+        android:id="@+id/list_fragment"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        class="com.mfcoding.locationBP.UI.fragments.LocationListFragment" />
 
 </LinearLayout>

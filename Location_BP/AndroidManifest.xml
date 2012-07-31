@@ -64,7 +64,7 @@
             </intent-filter>
         </receiver>
         
-        <provider android:authorities="com.mfcoding.provider.locations" android:name=".content_providers.LocationContentProvider"/>
+        <provider android:authorities="com.mfcoding.provider.locations" android:name=".content_providers.LocationsContentProvider"/>
     </application>
 
 </manifest>

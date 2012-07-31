@@ -18,9 +18,10 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int fragment=0x7f060007;
-        public static final int fragment2=0x7f060008;
+        public static final int fragment=0x7f060008;
+        public static final int fragment2=0x7f060009;
         public static final int latitude=0x7f060002;
+        public static final int list_fragment=0x7f060007;
         public static final int location=0x7f060001;
         public static final int location_fragment=0x7f060005;
         public static final int longitude=0x7f060003;

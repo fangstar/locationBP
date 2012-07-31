@@ -36,7 +36,7 @@ import android.util.Log;
  * Content Provider and database for storing the list of
  * places nearby our current location
  */
-public class LocationContentProvider extends ContentProvider {
+public class LocationsContentProvider extends ContentProvider {
 
   /** The underlying database */
   private SQLiteDatabase locationDB;
@@ -89,23 +89,23 @@ public class LocationContentProvider extends ContentProvider {
       locationDB = null;
       Log.d(TAG, "Database Opening exception");
     }
-    ContentValues values = new ContentValues();
-    //  values.put(PlacesContentProvider.KEY_ID, id);  
-    //  values.put(PlacesContentProvider.KEY_NAME, name);
-    double lat = -123.084095;
-    double lng = 34.422006;
-    //  double lat = location.getLatitude();
-    //  double lng = location.getLongitude();
-    values.put(LocationContentProvider.KEY_LOCATION_LAT, lat);
-    values.put(LocationContentProvider.KEY_LOCATION_LNG, lng);
-    //  values.put(LocationContentProvider.KEY_VICINITY, vicinity);
-    //  values.put(LocationContentProvider.KEY_TYPES, types);
-    //  values.put(LocationContentProvider.KEY_VIEWPORT, viewport);
-    //  values.put(LocationContentProvider.KEY_ICON, icon);
-    //  values.put(LocationContentProvider.KEY_REFERENCE, reference);
-    values.put(LocationContentProvider.KEY_LAST_UPDATE_TIME, System.currentTimeMillis());    
-    long rowID = locationDB.insert(LOCATIONS_TABLE, "nullhack", values);
-    
+//    ContentValues values = new ContentValues();
+//    //  values.put(PlacesContentProvider.KEY_ID, id);  
+//    //  values.put(PlacesContentProvider.KEY_NAME, name);
+//    //double lat = -123.084095;
+//    //double lng = 34.422006;
+//      double lat = location.getLatitude();
+//      double lng = location.getLongitude();
+//    values.put(LocationsContentProvider.KEY_LOCATION_LAT, lat);
+//    values.put(LocationsContentProvider.KEY_LOCATION_LNG, lng);
+//    //  values.put(LocationContentProvider.KEY_VICINITY, vicinity);
+//    //  values.put(LocationContentProvider.KEY_TYPES, types);
+//    //  values.put(LocationContentProvider.KEY_VIEWPORT, viewport);
+//    //  values.put(LocationContentProvider.KEY_ICON, icon);
+//    //  values.put(LocationContentProvider.KEY_REFERENCE, reference);
+//    values.put(LocationsContentProvider.KEY_LAST_UPDATE_TIME, System.currentTimeMillis());    
+//    long rowID = locationDB.insert(LOCATIONS_TABLE, "nullhack", values);
+//    
     return (locationDB == null) ? false : true;
   }
 
