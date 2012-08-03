@@ -187,10 +187,6 @@ public class LocationUpdateService extends IntentService {
 			} else
 				Log.d(TAG, "Data is fresh: Not refreshing");
 
-			// Retry any queued checkins.
-			// Intent checkinServiceIntent = new Intent(this,
-			// PlaceCheckinService.class);
-			// startService(checkinServiceIntent);
 		}
 		Log.d(TAG, "Location Service Complete");
 	}

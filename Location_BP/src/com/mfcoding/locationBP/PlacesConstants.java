@@ -19,26 +19,13 @@ package com.mfcoding.locationBP;
 import android.app.AlarmManager;
 
 public class PlacesConstants {
-  /**
-   * TODO **P1**  You must put your Google Places API key here.
-   * You can get your API key from: 
-   * {@link http://code.google.com/apis/maps/documentation/places/#Limits}
-   */
-  private static String MY_API_KEY =  "AIzaSyBqnJyW_D1QbkaxVuQ0_8aY9h-bo44UI5s" ;
-  
-  public static String PLACES_API_KEY = "&key=" + MY_API_KEY;
     
   /**
    * You'll need to modify these values to suit your own app.
    */
   // TODO Turn off when deploying your app.
   public static boolean DEVELOPER_MODE = true;
-  // TODO Point these at your data sources.
-  public static String PLACES_LIST_BASE_URI = "https://maps.googleapis.com/maps/api/place/search/xml?sensor=true";
-  public static String PLACES_DETAIL_BASE_URI = "https://maps.googleapis.com/maps/api/place/details/xml?sensor=true&reference=";
-  public static String PLACES_CHECKIN_URI = "https://maps.googleapis.com/maps/api/place/check-in/xml?sensor=true";
-  public static String PLACES_CHECKIN_OK_STATUS = "OK";
-     
+    
   /**
    * These values control the user experience of your app. You should
    * modify them to provide the best experience based on how your
@@ -107,8 +94,6 @@ public class PlacesConstants {
   public static String ARGUMENTS_KEY_LATITUDE = "latitude";
   public static String ARGUMENTS_KEY_LONGITUDE = "longitude";
   
-//  public static String NEW_CHECKIN_ACTION = "com.mfcoding.places.NEW_CHECKIN_ACTION";
-//  public static String RETRY_QUEUED_CHECKINS_ACTION = "com.mfcoding.places.retry_queued_checkins";
   public static String ACTIVE_LOCATION_UPDATE_PROVIDER_DISABLED = "com.mfcoding.places.active_location_update_provider_disabled";
   public static String ACTIVE_LOCATION_UPDATE = "com.mfcoding.places.active_location_update";
   
@@ -119,5 +104,4 @@ public class PlacesConstants {
   
   public static String CONSTRUCTED_LOCATION_PROVIDER = "CONSTRUCTED_LOCATION_PROVIDER";
   
-  public static int CHECKIN_NOTIFICATION = 0;
 }

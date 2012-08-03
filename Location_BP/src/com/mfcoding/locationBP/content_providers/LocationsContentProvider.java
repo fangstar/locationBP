@@ -49,15 +49,8 @@ public class LocationsContentProvider extends ContentProvider {
   // TODO Replace the columns names and database creation SQL with values for your own app.  
   // Column Names
   public static final String KEY_ID = "_id";
-  //public static final String KEY_NAME = "name";
-  //public static final String KEY_VICINITY = "vicinity";
   public static final String KEY_LOCATION_LAT = "latitude";
   public static final String KEY_LOCATION_LNG = "longitude";
-  //public static final String KEY_TYPES = "types";
-  //public static final String KEY_VIEWPORT = "viewport";
-  //public static final String KEY_ICON = "icon";
-  //public static final String KEY_REFERENCE = "reference";
-  //public static final String KEY_DISTANCE = "distance";
   public static final String KEY_LAST_UPDATE_TIME = "lastupdatetime";
 	
   // TODO Replace this URI with something unique to your own application.
@@ -89,23 +82,7 @@ public class LocationsContentProvider extends ContentProvider {
       locationDB = null;
       Log.d(TAG, "Database Opening exception");
     }
-//    ContentValues values = new ContentValues();
-//    //  values.put(PlacesContentProvider.KEY_ID, id);  
-//    //  values.put(PlacesContentProvider.KEY_NAME, name);
-//    //double lat = -123.084095;
-//    //double lng = 34.422006;
-//      double lat = location.getLatitude();
-//      double lng = location.getLongitude();
-//    values.put(LocationsContentProvider.KEY_LOCATION_LAT, lat);
-//    values.put(LocationsContentProvider.KEY_LOCATION_LNG, lng);
-//    //  values.put(LocationContentProvider.KEY_VICINITY, vicinity);
-//    //  values.put(LocationContentProvider.KEY_TYPES, types);
-//    //  values.put(LocationContentProvider.KEY_VIEWPORT, viewport);
-//    //  values.put(LocationContentProvider.KEY_ICON, icon);
-//    //  values.put(LocationContentProvider.KEY_REFERENCE, reference);
-//    values.put(LocationsContentProvider.KEY_LAST_UPDATE_TIME, System.currentTimeMillis());    
-//    long rowID = locationDB.insert(LOCATIONS_TABLE, "nullhack", values);
-//    
+    
     return (locationDB == null) ? false : true;
   }
 
@@ -134,11 +111,6 @@ public class LocationsContentProvider extends ContentProvider {
 
     // If no sort order is specified sort by date / time
     String orderBy = sort;
-/*    if (TextUtils.isEmpty(sort)) {
-      orderBy = KEY_DISTANCE + " ASC";
-    } else {
-      orderBy = sort;
-    }*/
 
     // Apply the query to the underlying database.
     Cursor c = qb.query(locationDB, 
@@ -222,15 +194,8 @@ public class LocationsContentProvider extends ContentProvider {
     private static final String DATABASE_CREATE =
       "create table " + LOCATIONS_TABLE + " (" 
       + KEY_ID + " INTEGER primary key autoincrement, "
-//      + KEY_NAME + " TEXT, "
-//      + KEY_VICINITY + " TEXT, "
       + KEY_LOCATION_LAT + " FLOAT, "
       + KEY_LOCATION_LNG + " FLOAT, "
-//      + KEY_TYPES + " TEXT, "
-//      + KEY_VIEWPORT + " TEXT, "
-//      + KEY_ICON + " TEXT, "
-//      + KEY_REFERENCE + " TEXT, "
-//      + KEY_DISTANCE + " FLOAT, "
       + KEY_LAST_UPDATE_TIME + " LONG); ";
         
     public PlacesDatabaseHelper(Context context, String name, CursorFactory factory, int version) {

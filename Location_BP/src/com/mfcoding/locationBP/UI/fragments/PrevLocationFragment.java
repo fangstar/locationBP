@@ -58,7 +58,7 @@ public class PrevLocationFragment extends Fragment {
 	TextView locationTextView;
 	TextView latitudeTextView;
 	TextView longitudeTextView;
-	TextView timeTextView;
+	//TextView timeTextView;
 	String latitude;
 	String longitude;
 	String[] location;
@@ -93,7 +93,7 @@ public class PrevLocationFragment extends Fragment {
 		locationTextView = (TextView) view.findViewById(R.id.location);
 		latitudeTextView = (TextView) view.findViewById(R.id.latitude);
 		longitudeTextView = (TextView) view.findViewById(R.id.longitude);
-		timeTextView = (TextView) view.findViewById(R.id.time);
+		//timeTextView = (TextView) view.findViewById(R.id.time);
 		locationTextView.setText("Prev Location");
 /*
 		if (getArguments() != null) {
@@ -117,7 +117,7 @@ public class PrevLocationFragment extends Fragment {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss z");
 		Log.d(TAG, String.format("getSharedPreferences - time:%s latitude:%d longitude:%d", sdf.format(lastTime),latitude, longitude));
 		
-		timeTextView.setText(sdf.format(lastTime));
+		//timeTextView.setText(sdf.format(lastTime));
 		latitudeTextView.setText(String.valueOf(latitude));
 		longitudeTextView.setText(String.valueOf(longitude));
 
@@ -139,7 +139,7 @@ public class PrevLocationFragment extends Fragment {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss z");
 		Log.d(TAG, String.format("getSharedPreferences - time:%s latitude:%d longitude:%d", sdf.format(lastTime),latitude, longitude));
 		
-		timeTextView.setText(sdf.format(lastTime));
+		//timeTextView.setText(sdf.format(lastTime));
 		latitudeTextView.setText(String.valueOf(latitude));
 		longitudeTextView.setText(String.valueOf(longitude));		
 		
@@ -157,7 +157,7 @@ public class PrevLocationFragment extends Fragment {
     Location location = (Location)intent.getExtras().get(LocationManager.KEY_LOCATION_CHANGED);
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss z");
-		timeTextView.setText(sdf.format(location.getTime()));
+		//timeTextView.setText(sdf.format(location.getTime()));
 		latitudeTextView.setText(String.valueOf(location.getLatitude()));
 		longitudeTextView.setText(String.valueOf(location.getLongitude()));
 

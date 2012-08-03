@@ -55,7 +55,7 @@ public class LocationActivity extends FragmentActivity {
 	protected ComponentName newCheckinReceiverName;
 
 	LocationFragment locationFragment;
-	PrevLocationFragment prevLocationFragment;
+	//PrevLocationFragment prevLocationFragment;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -67,8 +67,8 @@ public class LocationActivity extends FragmentActivity {
 		// Get a handle to the Fragments
 		locationFragment = (LocationFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.location_fragment);
-		prevLocationFragment = (PrevLocationFragment) getSupportFragmentManager()
-				.findFragmentById(R.id.prev_location_fragment);
+//		prevLocationFragment = (PrevLocationFragment) getSupportFragmentManager()
+//				.findFragmentById(R.id.prev_location_fragment);
 
 		// Get references to the managers
 		packageManager = getPackageManager();
@@ -403,8 +403,8 @@ public class LocationActivity extends FragmentActivity {
 
 			boolean locUpdated = intent
 					.hasExtra(LocationManager.KEY_LOCATION_CHANGED);
-			if (locUpdated)
-				prevLocationFragment.updateUI(intent);
+//			if (locUpdated)
+//				prevLocationFragment.updateUI(intent);
 
 			Log.d(TAG, "providerDisabled:" + providerDisabled + " locUpdated:"
 					+ locUpdated);
